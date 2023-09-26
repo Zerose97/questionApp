@@ -1,0 +1,18 @@
+<div>
+    <div class="form-group my-1 w-100" *ngFor="let item of listAnswer">
+            <div>
+                <b>{{item['title']}}</b>
+            </div>
+            <div *ngIf="item['questionType'] === QuestionType.Paragraph; else multipleAnswer">
+                <div>{{item['answer']}}</div>
+            </div>
+            <ng-template #multipleAnswer>
+                <ng-container *ngFor="let value of item['answer']; let j = index">
+                    <p>
+                       {{value}}
+                    </p>
+                </ng-container>
+            </ng-template>
+    </div>
+    <p class="add-new-text" (click)="back()">Back to Forms Builder</p>
+</div>

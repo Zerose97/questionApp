@@ -1,0 +1,30 @@
+:host {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 25px;
+    border: solid;
+    padding: 20px;
+    background: white;
+    font-size: 1rem;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .box-option {
+        display: flex;
+        flex-direction: column;
+    }
+    .option-item {
+        display: flex;
+        justify-content: space-between;
+    }
+    .buttons {
+        display: flex;
+        justify-content: space-around;
+    }
+}

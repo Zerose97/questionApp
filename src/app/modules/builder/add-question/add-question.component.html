@@ -1,0 +1,59 @@
+<form [formGroup]="questionForm" (ngSubmit)="addQuestion()">
+
+    <!-- Answer Format Selector -->
+    <div class="form-group w-100">
+        <select class="w-100 text-center my-1" formControlName="questionType" (change)="onChange($event.target)">
+            <option [value]="QuestionType.Multiple">Check Box List</option>
+            <option [value]="QuestionType.Paragraph">Paragraph Answer</option>
+        </select>
+    </div>
+
+    <!-- Question Input -->
+    <div class="form-group w-100">
+        <input class="w-100 text-center my-1" type="text" formControlName="title" placeholder="Type question here" />
+        <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{target: questionForm, typeForm: 'title'}"></ng-container>
+    </div>
+
+    <!-- Checkbox Options -->
+    <div class="w-100 box-option" *ngIf="questionForm.get('questionType')?.value === QuestionType.Multiple" formArrayName="options">
+        <div class="form-group option-item my-1"
+             *ngFor="let option of optionsArray.controls; let i = index"
+             [formGroupName]="i">
+            <input type="text" formControlName="textOption" placeholder="Add answer question" />
+            <button type="button" (click)="removeOption(i)">Remove</button>
+            <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{target: option, typeForm: 'textOption'}"></ng-container>
+        </div>
+        <button [disabled]="optionsArray.controls.length > 4" type="button" (click)="addOption()">Add Another answer</button>
+    </div>
+
+    <!-- Required Checkbox -->
+    <div class="form-group w-100" *ngIf="questionForm.get('questionType')?.value === QuestionType.Multiple">
+        <label>
+            <input type="checkbox" formControlName="allowOther" /> Allow user to specify their own answer
+        </label>
+    </div>
+    
+    <div class="form-group w-100">
+        <label>
+            <input type="checkbox" formControlName="isRequired" /> This field is required
+        </label>
+    </div>
+
+    <div class="w-100 buttons">
+        <button class="my-1" type="button" (click)="cancel()">Close</button>
+        <button class="my-1" type="submit">Submit</button>
+    </div>
+
+</form>
+
+
+<ng-template #formError let-target='target' let-typeForm="typeForm">
+    <div *ngFor="let validation of validationMessage[typeForm]">
+        <div style="color: red;" *ngIf="target.get(typeForm).hasError(validation.type) && (target.get(typeForm).dirty || isErrorForm)">
+            {{ validation.message }}
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- <button (click)="reviewAnswers()">Review My Answers</button> -->

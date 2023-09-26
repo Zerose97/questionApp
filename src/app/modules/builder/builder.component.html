@@ -1,0 +1,47 @@
+<app-add-question *ngIf="openForm" (cancelForm)="onCancel($event)" (submitForm)="onSubmit($event)"></app-add-question>
+
+<form [formGroup]="listQuestionForm" (ngSubmit)="reviewQuestion()">
+
+    <div formArrayName="questions">
+        <div class="form-group my-1 w-100" *ngFor="let question of questionArray.controls; let i = index" [formGroupName]="i">
+            <ng-container *ngIf="question.value as questionItem">
+                <div>
+                    <b>{{questionItem.title}}</b> <span style="color: red;" *ngIf="questionItem.isRequired">*</span>
+                </div>
+                <div *ngIf="questionItem.questionType === QuestionType.Paragraph; else multipleAnswer">
+                    <textarea formControlName="answer"></textarea>
+                </div>
+                <ng-template #multipleAnswer>
+                    <ng-container *ngFor="let option of questionItem.options; let j = index">
+                        <div>
+                            <input type="checkbox" (change)="onCheck($event.target, i, option.textOption)" /><span>{{option.textOption}}</span>
+                        </div>
+                    </ng-container>
+                    <div *ngIf="questionItem.allowOther">
+                        <input type="checkbox" formControlName="isSelectOther" (change)="onCheckOther($event.target, i)"/>
+                        <span *ngIf="!questionItem.isSelectOther">Other</span>
+                        <input *ngIf="questionItem.isSelectOther" type="text" formControlName="otherContent" (focus)="onTyping($event, i)"/>
+                        <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{target: question, typeForm: 'otherContent'}"></ng-container>
+                    </div>
+                </ng-template>
+            </ng-container>
+            <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{target: question, typeForm: 'answer'}"></ng-container>
+        </div>
+    </div>
+
+    
+    <p class="add-new-text" (click)="openForm = true">Add new Question </p>
+
+    <button style="float: right;" type="submit" [disabled]="!questionArray.controls.length">Review My Answers ></button>
+
+</form>
+
+
+
+<ng-template #formError let-target='target' let-typeForm="typeForm">
+    <div *ngFor="let validation of validationMessage[typeForm]">
+        <div style="color: red;" *ngIf="target.get(typeForm).hasError(validation.type) && (target.get(typeForm).dirty || isErrorForm)">
+            {{ validation.message }}
+        </div>
+    </div>
+</ng-template>
